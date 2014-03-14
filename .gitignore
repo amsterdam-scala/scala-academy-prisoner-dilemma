@@ -1,1 +1,43 @@
+<<<<<<< HEAD
 /bin
+=======
+*.class
+*.log
+
+# OS X
+.DS_Store
+
+# SBT specific
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Gradle Specific
+.gradle
+
+#deployment keys
+id_rsa_navcloud_deployment
+
+# NPM dependencies.
+node_modules/
+
+# IDE specific
+.scala_dependencies
+.cache
+.classpath
+*.iml
+.idea/
+.idea_modules/
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+/.env
+atlassian-ide-plugin.xml
+/.sublime/
+
+/custom-settings.sbt
+>>>>>>> 4a0db83fdae6dccb29d50f466f33880de72c9bef
