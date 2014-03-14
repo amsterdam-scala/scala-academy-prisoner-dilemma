@@ -1,4 +1,4 @@
-package com.amsscala.academy.server
+package com.amsscala
 
 object ServerMain extends App {
   println("Hello server!")

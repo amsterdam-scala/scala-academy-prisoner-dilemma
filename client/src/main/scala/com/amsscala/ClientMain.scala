@@ -1,4 +1,4 @@
-package com.amsscala.academy.client
+package com.amsscala
 
 object ClientMain extends App {
   println("Hello client!")
