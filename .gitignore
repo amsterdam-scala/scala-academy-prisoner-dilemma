@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-/bin
-=======
 *.class
 *.log
 
@@ -40,4 +37,4 @@ atlassian-ide-plugin.xml
 /.sublime/
 
 /custom-settings.sbt
->>>>>>> 4a0db83fdae6dccb29d50f466f33880de72c9bef
+
