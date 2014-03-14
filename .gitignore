@@ -1,5 +1,6 @@
 *.class
 *.log
+*.idx
 
 # OS X
 .DS_Store
