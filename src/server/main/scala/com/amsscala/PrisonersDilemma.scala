@@ -1,4 +1,4 @@
-package amsterdam.scala_academy
+package com.amsscala
 
 object PrisonersDilemma {
   /**
