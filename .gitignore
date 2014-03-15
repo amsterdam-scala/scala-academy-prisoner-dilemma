@@ -23,6 +23,7 @@ id_rsa_navcloud_deployment
 node_modules/
 
 # IDE specific
+/sql
 .scala_dependencies
 .cache
 .classpath
@@ -39,3 +40,4 @@ atlassian-ide-plugin.xml
 
 /custom-settings.sbt
 
+/bin
