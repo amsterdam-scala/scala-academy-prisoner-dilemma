@@ -1,5 +1,6 @@
 *.class
 *.log
+*.idx
 
 # OS X
 .DS_Store
@@ -22,6 +23,7 @@ id_rsa_navcloud_deployment
 node_modules/
 
 # IDE specific
+/sql
 .scala_dependencies
 .cache
 .classpath
@@ -37,3 +39,5 @@ atlassian-ide-plugin.xml
 /.sublime/
 
 /custom-settings.sbt
+
+/bin

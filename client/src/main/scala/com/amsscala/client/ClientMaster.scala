@@ -1,5 +1,4 @@
-package com.amsscala.academy
-package client
+package com.amsscala.client
 
 import akka.actor.{Actor, ActorLogging}
 

@@ -1,4 +1,4 @@
-package com.amsscala.academy
+package com.amsscala
 package server
 
 import common.GameServerSettings._

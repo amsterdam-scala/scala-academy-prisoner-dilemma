@@ -1,5 +1,4 @@
-package com.amsscala.academy
-package common
+package com.amsscala.common
 
 object GameServerSettings {
   val clusterName = "gameserver"
