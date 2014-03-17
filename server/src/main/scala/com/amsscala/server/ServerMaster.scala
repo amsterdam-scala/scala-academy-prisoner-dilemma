@@ -8,3 +8,5 @@ class ServerMaster extends Actor with ActorLogging {
     case _ ⇒
   }
 }
+
+case class Client(ref: ActorRef, state: ClientState)
