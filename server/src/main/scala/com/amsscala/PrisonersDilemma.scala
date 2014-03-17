@@ -11,12 +11,12 @@ object PrisonersDilemma {
    *  (on the lesser charge)
    */
   def engine(Pris1Defects: Boolean, Pris2Defects: Boolean,
-             sanction1: Int = 1, sanction2: Int = 2, sanction3: Int = 3) {
+             sanction1: Int = 1, sanction2: Int = 2, sanction3: Int = 3) = {
     (Pris1Defects, Pris2Defects) match {
-      case (false, false) => (sanction1, sanction1)
-      case (true, false)  => (0, sanction3)
-      case (false, true)  => (sanction3, 0)
-      case (true, true)   => (sanction2, sanction2)
+      case (false, false) ⇒ (sanction1, sanction1)
+      case (true, false)  ⇒ (0, sanction3)
+      case (false, true)  ⇒ (sanction3, 0)
+      case (true, true)   ⇒ (sanction2, sanction2)
     }
   }
 }
