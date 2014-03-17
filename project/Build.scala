@@ -64,7 +64,6 @@ object PrisonerDilemmaBuild extends Build {
   def formattingPreferences = {
     import scalariform.formatter.preferences._
     FormattingPreferences()
-      .setPreference(RewriteArrowSymbols, true)
       .setPreference(AlignParameters, true)
       .setPreference(AlignSingleLineCaseStatements, true)
   }

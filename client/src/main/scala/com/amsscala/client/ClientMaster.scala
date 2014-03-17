@@ -13,6 +13,6 @@ class ClientMaster(server: ActorSelection) extends Actor with ActorLogging {
   }
 
   def receive = {
-    case msg ⇒ log.info("Received a msg: {}", msg)
+    case msg => log.info("Received a msg: {}", msg)
   }
 }

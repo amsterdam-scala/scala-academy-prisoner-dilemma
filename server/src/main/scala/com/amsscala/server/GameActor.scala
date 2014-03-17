@@ -26,7 +26,7 @@ class GameActor extends Actor with ActorLogging {
   private var currentP2Answer: Option[RoundAnswer] = None
 
   override def receive = {
-    case init: InitGame ⇒ {
+    case init: InitGame => {
       gameId = init.id
       gameName = init.name
       p1 = init.p1
@@ -38,7 +38,7 @@ class GameActor extends Actor with ActorLogging {
   }
 
   private def prepare: Receive = {
-    case PlayerReady ⇒ {
+    case PlayerReady => {
       if (sender == p1) {
         p1Ready == true
       } else if (sender == p2) {
@@ -59,7 +59,7 @@ class GameActor extends Actor with ActorLogging {
   }
 
   private def game: Receive = {
-    case RoundTrigger ⇒ {
+    case RoundTrigger => {
       currentRound += 1
       currentP1Answer = None
       currentP2Answer = None
@@ -67,13 +67,13 @@ class GameActor extends Actor with ActorLogging {
       p1 ! StartRound(currentRound)
       p2 ! StartRound(currentRound)
     }
-    case answer: RoundAnswer ⇒ {
+    case answer: RoundAnswer => {
       (sender, answer) match {
-        case (p1, answer) if (currentP1Answer.isEmpty) ⇒
+        case (p1, answer) if (currentP1Answer.isEmpty) =>
           currentP1Answer = Some(answer)
-        case (p2, answer) if (currentP2Answer.isEmpty) ⇒
+        case (p2, answer) if (currentP2Answer.isEmpty) =>
           currentP2Answer = Some(answer)
-        case (p, _) ⇒
+        case (p, _) =>
           log.warning("Result already received for round " + currentRound + " from player " + p)
       }
 
@@ -98,7 +98,7 @@ class GameActor extends Actor with ActorLogging {
   }
 
   private def shutdown: Receive = {
-    case ShutdownGame ⇒ {
+    case ShutdownGame => {
       parent ! GameResult(gameId, p1Score, p2Score)
       context stop self
     }
@@ -125,10 +125,10 @@ class PlayerActor extends Actor with ActorLogging {
   import PlayerActor._
 
   override def receive = {
-    case StartGame(_, _) ⇒ sender ! PlayerReady
-    case StartRound(_)   ⇒ sender ! RoundAnswer(Math.random() >= 0.5)
-    case r: RoundResult  ⇒ log.info(r.toString)
-    case FinishGame      ⇒ log.info("Done")
+    case StartGame(_, _) => sender ! PlayerReady
+    case StartRound(_)   => sender ! RoundAnswer(Math.random() >= 0.5)
+    case r: RoundResult  => log.info(r.toString)
+    case FinishGame      => log.info("Done")
   }
 }
 

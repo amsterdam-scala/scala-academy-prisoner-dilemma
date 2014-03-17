@@ -27,9 +27,9 @@ object ServerMain extends App {
 
 class ClusterListener extends Actor with ActorLogging {
   def receive = {
-    case s: CurrentClusterState    ⇒ log.info("Current cluster members: {}", s.members)
-    case MemberUp(member)          ⇒ log.info("Member is up: {}", member)
-    case UnreachableMember(member) ⇒ log.info("Member is unreachable: {}", member)
-    case e: ClusterDomainEvent     ⇒ // ignore
+    case s: CurrentClusterState    => log.info("Current cluster members: {}", s.members)
+    case MemberUp(member)          => log.info("Member is up: {}", member)
+    case UnreachableMember(member) => log.info("Member is unreachable: {}", member)
+    case e: ClusterDomainEvent     => // ignore
   }
 }

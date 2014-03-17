@@ -15,7 +15,7 @@ class ServerMaster extends Actor with ActorLogging {
   private[this] val clients: Set[Client] = Set()
 
   def receive = {
-    case Register ⇒
+    case Register =>
       val newClient = Client(sender, Waiting)
       clients += newClient
 
@@ -31,7 +31,7 @@ class ServerMaster extends Actor with ActorLogging {
   }
 
   private[this] def findMatch(client: Client): Option[Client] = {
-    val allMatches = clients.filter(c ⇒ c.state == Waiting && c.ref != client.ref).toList
+    val allMatches = clients.filter(c => c.state == Waiting && c.ref != client.ref).toList
 
     if (allMatches.size > 0)
       Some(allMatches(Random.nextInt(allMatches.size)))
