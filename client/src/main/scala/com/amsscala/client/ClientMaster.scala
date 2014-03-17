@@ -1,10 +1,18 @@
-package com.amsscala.client
+package com.amsscala
+package client
 
-import akka.actor.{ Actor, ActorLogging }
+import common.LobbyProtocol.Register
 
-class ClientMaster extends Actor with ActorLogging {
+import akka.actor.{ ActorSelection, Actor, ActorLogging }
+
+
+class ClientMaster(server: ActorSelection) extends Actor with ActorLogging {
+
+  override def preStart(): Unit = {
+    server ! Register
+  }
 
   def receive = {
-    case _ ⇒
+    case msg ⇒ log.info("Received a msg: {}", msg)
   }
 }

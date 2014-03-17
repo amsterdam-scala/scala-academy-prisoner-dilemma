@@ -3,8 +3,11 @@ package client
 
 import common.GameServerSettings._
 
-import akka.actor.{ Props, Address, ActorSystem }
-import akka.cluster.Cluster
+import akka.actor._
+import akka.cluster.{Member, Cluster}
+import akka.cluster.ClusterEvent.InitialStateAsEvents
+import akka.cluster.ClusterEvent.MemberUp
+
 import com.typesafe.config.ConfigFactory
 
 object ClientMain extends App {
@@ -24,7 +27,15 @@ object ClientMain extends App {
     println("Client joined the game server.")
     println("Connecting to the server lobby.\n")
 
-    val clientMaster = system.actorOf(Props[ClientMaster], "clientmaster")
-    // clientMaster ! JoinServer
+    cluster.subscribe(system.actorOf(Props(new Actor {
+      def receive = {
+        case MemberUp(member) if member.hasRole("server") => register(member)
+      }
+    })), initialStateMode = InitialStateAsEvents, classOf[MemberUp])
+  }
+
+  def register(serverNode: Member): Unit = {
+    val server = system.actorSelection(RootActorPath(serverNode.address) / "user" / "serverMaster")
+    system.actorOf(Props(new ClientMaster(server)), "clientMaster")
   }
 }
