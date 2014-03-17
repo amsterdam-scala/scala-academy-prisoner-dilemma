@@ -4,7 +4,7 @@ package client
 import common.GameServerSettings._
 
 import akka.actor._
-import akka.cluster.{Member, Cluster}
+import akka.cluster.{ Member, Cluster }
 import akka.cluster.ClusterEvent.InitialStateAsEvents
 import akka.cluster.ClusterEvent.MemberUp
 

@@ -7,8 +7,7 @@ import common.{ Waiting, ClientState }
 import scala.collection.mutable.Set
 import scala.util.Random
 
-import akka.actor.{ActorRef, Actor, ActorLogging}
-
+import akka.actor.{ ActorRef, Actor, ActorLogging }
 
 class ServerMaster extends Actor with ActorLogging {
 
@@ -20,11 +19,11 @@ class ServerMaster extends Actor with ActorLogging {
       clients += newClient
 
       log.info("Registered a new client {}", newClient)
-      log.info("Finding a match for {}",     newClient)
+      log.info("Finding a match for {}", newClient)
 
       findMatch(newClient).foreach { matched =>
         newClient.ref ! "You got a match :)"
-        matched.ref   ! "You got a match :)"
+        matched.ref ! "You got a match :)"
 
         // TODO setup a new game here =)
       }

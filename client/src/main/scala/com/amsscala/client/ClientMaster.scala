@@ -5,7 +5,6 @@ import common.LobbyProtocol.Register
 
 import akka.actor.{ ActorSelection, Actor, ActorLogging }
 
-
 class ClientMaster(server: ActorSelection) extends Actor with ActorLogging {
 
   override def preStart(): Unit = {
