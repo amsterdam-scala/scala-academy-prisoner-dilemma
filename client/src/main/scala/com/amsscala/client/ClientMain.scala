@@ -3,10 +3,9 @@ package client
 
 import common.GameServerSettings._
 
-import akka.actor.{Props, Address, ActorSystem}
+import akka.actor.{ Props, Address, ActorSystem }
 import akka.cluster.Cluster
 import com.typesafe.config.ConfigFactory
-
 
 object ClientMain extends App {
 

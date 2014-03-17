@@ -3,11 +3,10 @@ package server
 
 import common.GameServerSettings._
 
-import akka.actor.{Actor, ActorLogging, Props, ActorSystem}
-import akka.cluster.ClusterEvent.{ClusterDomainEvent, UnreachableMember, MemberUp, CurrentClusterState}
+import akka.actor.{ Actor, ActorLogging, Props, ActorSystem }
+import akka.cluster.ClusterEvent.{ ClusterDomainEvent, UnreachableMember, MemberUp, CurrentClusterState }
 import akka.cluster.Cluster
 import com.typesafe.config.ConfigFactory
-
 
 object ServerMain extends App {
 
@@ -28,9 +27,9 @@ object ServerMain extends App {
 
 class ClusterListener extends Actor with ActorLogging {
   def receive = {
-    case s: CurrentClusterState    => log.info("Current cluster members: {}", s.members)
-    case MemberUp(member)          => log.info("Member is up: {}", member)
-    case UnreachableMember(member) => log.info("Member is unreachable: {}", member)
-    case e: ClusterDomainEvent     => // ignore
+    case s: CurrentClusterState    ⇒ log.info("Current cluster members: {}", s.members)
+    case MemberUp(member)          ⇒ log.info("Member is up: {}", member)
+    case UnreachableMember(member) ⇒ log.info("Member is unreachable: {}", member)
+    case e: ClusterDomainEvent     ⇒ // ignore
   }
 }
