@@ -71,13 +71,12 @@ object PrisonerDilemmaBuild extends Build {
 
 object Dependencies {
   import Dependency._
-  val prisonerdilemma = Seq(akkaActor, akkaCluster, scalaTest, jUnit, akkaTestKit, specs2)
+  val prisonerdilemma = Seq(akkaActor, akkaCluster, jUnit, akkaTestKit, specs2)
 }
 
 object Dependency {
   object Version {
     val Akka      = "2.3.0"
-    val Scalatest = "1.9.1"
     val JUnit     = "4.10"
     val Specs2    = "2.2.2"
   }
@@ -89,7 +88,6 @@ object Dependency {
 
   // ---- Test dependencies ----
 
-  val scalaTest   = "org.scalatest"       %% "scalatest"               % Version.Scalatest  % "test"
   val specs2      = "org.specs2"          %% "specs2"                  % Version.Specs2     % "test"
   val akkaTestKit = "com.typesafe.akka"   %% "akka-testkit"            % Version.Akka       % "test"
   val jUnit       = "junit"               % "junit"                    % Version.JUnit      % "test"
