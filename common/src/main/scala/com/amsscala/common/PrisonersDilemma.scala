@@ -1,6 +1,6 @@
-package com.amsscala
+package com.amsscala.common
 
-import com.amsscala.common.GameProtocol._
+import GameProtocol._
 
 object PrisonersDilemma {
   /**
