@@ -3,12 +3,13 @@ package com.amsscala.server
 import akka.actor._
 import scala.concurrent.duration._
 import com.amsscala.PrisonersDilemma
+import com.amsscala.common._
 
 class GameActor extends Actor with ActorLogging {
   import context._
 
   import GameActor._
-  import PlayerActor._
+  import GameProtocol._
 
   private var gameId: String = _
   private var gameName: String = _
@@ -78,18 +79,18 @@ class GameActor extends Actor with ActorLogging {
       }
 
       if (currentP1Answer.isDefined && currentP2Answer.isDefined) {
-        val (p1RoundScore, p2RoundScore) = PrisonersDilemma.engine(currentP1Answer.get.defect, currentP2Answer.get.defect)
+        val (p1RoundScore, p2RoundScore) = PrisonersDilemma.engine(currentP1Answer.get.answer, currentP2Answer.get.answer)
         p1Score += p1RoundScore
         p2Score += p2RoundScore
 
-        p1 ! RoundResult(currentRound, currentP1Answer.get.defect, currentP2Answer.get.defect, p1Score, p2Score)
-        p2 ! RoundResult(currentRound, currentP2Answer.get.defect, currentP1Answer.get.defect, p2Score, p1Score)
+        p1 ! RoundResult(currentRound, currentP1Answer.get.answer, currentP2Answer.get.answer, p1Score, p2Score)
+        p2 ! RoundResult(currentRound, currentP2Answer.get.answer, currentP1Answer.get.answer, p2Score, p1Score)
 
         if (currentRound < totalRounds) {
           system.scheduler.scheduleOnce(1.second, self, RoundTrigger)
         } else {
-          p1 ! FinishGame
-          p2 ! FinishGame
+          p1 ! EndOfGame(p2Score, p1Score)
+          p2 ! EndOfGame(p1Score, p2Score)
           become(shutdown)
           self ! ShutdownGame
         }
@@ -99,7 +100,7 @@ class GameActor extends Actor with ActorLogging {
 
   private def shutdown: Receive = {
     case ShutdownGame => {
-      parent ! GameResult(gameId, p1Score, p2Score)
+      parent ! EndOfGame(p1Score, p2Score)
       context stop self
     }
   }
@@ -109,33 +110,21 @@ object GameActor {
   val MAX_ROUNDS = 100
   val MIN_ROUNDS = 60
 
-  sealed trait GameActorProtocol
-  case class InitGame(id: String, name: String, p1: ActorRef, p2: ActorRef) extends GameActorProtocol
-  case object PlayerReady extends GameActorProtocol
-  case class RoundAnswer(defect: Boolean) extends GameActorProtocol
+  private sealed trait GameActorProtocol
   private case object RoundTrigger extends GameActorProtocol
   private case object ShutdownGame extends GameActorProtocol
-
-  // TODO: move to other protocol
-  case class GameResult(id: String, p1Score: Int, p2Score: Int)
 }
 
 class PlayerActor extends Actor with ActorLogging {
-  import GameActor._
-  import PlayerActor._
+  import GameProtocol._
+
+  private def randomAnswer = if (Math.random() >= 0.5) Talk else Silent
 
   override def receive = {
-    case StartGame(_, _) => sender ! PlayerReady
-    case StartRound(_)   => sender ! RoundAnswer(Math.random() >= 0.5)
-    case r: RoundResult  => log.info(r.toString)
-    case FinishGame      => log.info("Done")
+    case StartGame(_, _)     => sender ! PlayerReady
+    case StartRound(roundNr) => sender ! RoundAnswer(roundNr, randomAnswer)
+    case r: RoundResult      => log.info(r.toString)
+    case EndOfGame(_, _)     => log.info("Done")
   }
 }
 
-object PlayerActor {
-  sealed trait PlayerActorProtocol
-  case class StartGame(id: String, name: String) extends PlayerActorProtocol
-  case class StartRound(number: Int) extends PlayerActorProtocol
-  case class RoundResult(number: Int, selfDefect: Boolean, otherDefect: Boolean, selfScore: Int, otherScore: Int) extends PlayerActorProtocol
-  case object FinishGame
-}
