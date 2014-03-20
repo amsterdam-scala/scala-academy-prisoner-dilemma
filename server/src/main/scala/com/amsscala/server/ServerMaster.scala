@@ -10,7 +10,7 @@ import akka.actor.{ Props, ActorRef, Actor, ActorLogging }
 
 import common.LobbyProtocol.Register
 import common.{ Waiting, ClientState }
-import common.GameProtocol.{EndOfGame, InitGame}
+import common.GameProtocol.{ EndOfGame, InitGame, AskForGame }
 
 
 class ServerMaster extends Actor with ActorLogging {
@@ -40,6 +40,14 @@ class ServerMaster extends Actor with ActorLogging {
       games.get(id).map { game =>
         updateClient(game.player1, newState = Waiting)
         updateClient(game.player2, newState = Waiting)
+      }
+
+    case AskForGame            =>
+      log.error(s"Received an AskForGame msg! Clients: $clients")
+      clients.find(_.ref == sender).foreach { client =>
+        if (client.state == Waiting) {
+          setupGame(client)
+        }
       }
   }
 
