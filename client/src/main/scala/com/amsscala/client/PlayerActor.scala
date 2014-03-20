@@ -1,7 +1,6 @@
 package com.amsscala.client
 
 import akka.actor._
-import scala.concurrent.duration._
 import com.amsscala.common._
 
 class PlayerActor(gameId: String, name: String, client: ActorRef) extends Actor with ActorLogging {
@@ -13,6 +12,8 @@ class PlayerActor(gameId: String, name: String, client: ActorRef) extends Actor 
     case StartGame(_, _)     => sender ! PlayerReady(client)
     case StartRound(roundNr) => sender ! RoundAnswer(roundNr, randomAnswer)
     case r: RoundResult      => log.info(r.toString)
-    case EndOfGame(_, _, _)  => log.info("Done")
+    case msg @ EndOfGame(_, _, _)  =>
+      client ! msg // notify the client
+      log.info("Done")
   }
 }
