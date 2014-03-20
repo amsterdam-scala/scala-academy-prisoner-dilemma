@@ -11,7 +11,7 @@ class ClientMaster(server: ActorSelection) extends Actor with ActorLogging with 
     server ! Register
   }
 
-  def playing(player: ActorRef): Receive = {
+  private[this] def playing(player: ActorRef): Receive = {
     case msg: InGameMsg           => player.forward(msg)
 
     case cmd @ EndOfGame(_, _, _) =>
@@ -23,7 +23,7 @@ class ClientMaster(server: ActorSelection) extends Actor with ActorLogging with 
     case _                        => stash()
   }
 
-  def waiting: Receive = {
+  private[this] def waiting: Receive = {
     case cmd @ StartGame(id, name) =>
       val player = context.actorOf(Props(new PlayerActor(id, name, self)))
       context.become(playing(player))
