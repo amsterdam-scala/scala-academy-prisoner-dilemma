@@ -106,8 +106,8 @@ class GameActor extends Actor with ActorLogging {
           system.scheduler.scheduleOnce(roundDelay, self, RoundTrigger)
         } else {
           log.info(gameLog("Ended, final scores " + p1Score + " : " + p2Score))
-          p1 ! EndOfGame(p2Score, p1Score)
-          p2 ! EndOfGame(p1Score, p2Score)
+          p1 ! EndOfGame(gameId, p2Score, p1Score)
+          p2 ! EndOfGame(gameId, p1Score, p2Score)
           become(shutdown)
           self ! ShutdownGame
         }
@@ -117,7 +117,7 @@ class GameActor extends Actor with ActorLogging {
 
   private def shutdown: Receive = {
     case ShutdownGame => {
-      parent ! EndOfGame(p1Score, p2Score)
+      parent ! EndOfGame(gameId, p1Score, p2Score)
       log.info(gameLog("Shutting down"))
       context stop self
     }

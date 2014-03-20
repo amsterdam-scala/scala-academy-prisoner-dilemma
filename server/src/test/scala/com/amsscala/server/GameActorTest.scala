@@ -110,8 +110,8 @@ class GameActorTest extends Specification with NoTimeConversions {
 
       (1 to 50).foreach(i => doRound(i))
 
-      p1Probe.expectMsg(EndOfGame(100, 100))
-      p2Probe.expectMsg(EndOfGame(100, 100))
+      p1Probe.expectMsg(EndOfGame(GAME_ID, 100, 100))
+      p2Probe.expectMsg(EndOfGame(GAME_ID, 100, 100))
     }
   }
 

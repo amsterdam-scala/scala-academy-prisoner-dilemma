@@ -54,7 +54,7 @@ class PlayerActorTest extends Specification with NoTimeConversions {
         r1answer.roundNr mustEqual 1
         playerActor ! RoundResult(1, Talk, r1answer.answer, 2, 2)
 
-        playerActor ! EndOfGame(2, 2)
+        playerActor ! EndOfGame(GAME_ID, 2, 2)
       }
 
       checkFullGame();

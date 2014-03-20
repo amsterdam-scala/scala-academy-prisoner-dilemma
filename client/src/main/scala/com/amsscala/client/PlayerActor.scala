@@ -13,6 +13,6 @@ class PlayerActor extends Actor with ActorLogging {
     case StartGame(_, _)     => sender ! PlayerReady
     case StartRound(roundNr) => sender ! RoundAnswer(roundNr, randomAnswer)
     case r: RoundResult      => log.info(r.toString)
-    case EndOfGame(_, _)     => log.info("Done")
+    case EndOfGame(_, _, _)  => log.info("Done")
   }
 }
