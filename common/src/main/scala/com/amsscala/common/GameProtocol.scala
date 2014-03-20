@@ -17,6 +17,8 @@ object GameProtocol {
   case class RoundResult(roundNr: Int, otherAnswer: Answer, ownAnswer: Answer, otherScore: Int, ownScore: Int) extends InGameMsg
   case class EndOfGame(id: String, otherScore: Int, ownScore: Int)
 
+  case object AskForGame
+
   sealed trait Answer
   case object Talk extends Answer
   case object Silent extends Answer
