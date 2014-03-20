@@ -4,7 +4,7 @@ import akka.actor._
 import scala.concurrent.duration._
 import com.amsscala.common._
 
-class PlayerActor extends Actor with ActorLogging {
+class PlayerActor(gameId: String, name: String) extends Actor with ActorLogging {
   import GameProtocol._
 
   private def randomAnswer = if (Math.random() >= 0.5) Talk else Silent

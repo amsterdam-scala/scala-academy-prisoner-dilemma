@@ -1,17 +1,34 @@
 package com.amsscala
 package client
 
+import akka.actor._
 import common.LobbyProtocol.Register
+import common.GameProtocol._
 
-import akka.actor.{ ActorSelection, Actor, ActorLogging }
-
-class ClientMaster(server: ActorSelection) extends Actor with ActorLogging {
+class ClientMaster(server: ActorSelection) extends Actor with ActorLogging with Stash {
 
   override def preStart(): Unit = {
     server ! Register
   }
 
-  def receive = {
-    case msg => log.info("Received a msg: {}", msg)
+  def playing(player: ActorRef): Receive = {
+    case msg: InGameMsg           => player.forward(msg)
+
+    case cmd @ EndOfGame(_, _, _) =>
+      log.debug("Game over. Waiting for another game...")
+      context.become(waiting)
+      unstashAll()
+      player ! PoisonPill
+
+    case _                        => stash()
   }
+
+  def waiting: Receive = {
+    case cmd @ StartGame(id, name) =>
+      val player = context.actorOf(Props(new PlayerActor(id, name)))
+      context.become(playing(player))
+      player.forward(cmd)
+  }
+
+  def receive = waiting
 }
