@@ -1,12 +1,15 @@
-package com.amsscala.client
+package com.amsscala
+package client
+
+import java.util.UUID._
 
 import akka.actor._
 import akka.testkit._
 import org.specs2.mutable._
 import org.specs2.time.NoTimeConversions
-import com.amsscala.common._
-import com.amsscala.common.GameProtocol._
-import scala.concurrent.duration._
+
+import common._
+import GameProtocol._
 
 class PlayerActorTest extends Specification with NoTimeConversions {
   //  private implicit val WAIT = 5.seconds
@@ -16,12 +19,12 @@ class PlayerActorTest extends Specification with NoTimeConversions {
   "Player basic protocol" should {
     "reply with ready after game start" in new DefaultContext {
       playerActor ! StartGame(GAME_ID, GAME_NAME)
-      expectMsg(PlayerReady)
+      expectMsg(PlayerReady(client.ref))
     }
 
     "reply with answer on a new round" in new DefaultContext {
       playerActor ! StartGame(GAME_ID, GAME_NAME)
-      expectMsg(PlayerReady)
+      expectMsg(PlayerReady(client.ref))
 
       playerActor ! StartRound(1)
       val answer = expectMsgType[RoundAnswer]
@@ -31,7 +34,7 @@ class PlayerActorTest extends Specification with NoTimeConversions {
 
     "reply with with answer on consecutive rounds" in new DefaultContext {
       playerActor ! StartGame(GAME_ID, GAME_NAME)
-      expectMsg(PlayerReady)
+      expectMsg(PlayerReady(client.ref))
 
       playerActor ! StartRound(1)
       val r1answer = expectMsgType[RoundAnswer]
@@ -47,7 +50,7 @@ class PlayerActorTest extends Specification with NoTimeConversions {
     "reset and work on new game" in new DefaultContext {
       def checkFullGame() {
         playerActor ! StartGame(GAME_ID, GAME_NAME)
-        expectMsg(PlayerReady)
+        expectMsg(PlayerReady(client.ref))
 
         playerActor ! StartRound(1)
         val r1answer = expectMsgType[RoundAnswer]
@@ -68,7 +71,9 @@ class PlayerActorTest extends Specification with NoTimeConversions {
     extends TestKit(ActorSystem("test-system"))
     with ImplicitSender with After {
 
-    lazy val playerActor = system.actorOf(Props[PlayerActor])
+    lazy val client = TestProbe()
+
+    lazy val playerActor = system.actorOf(Props(new PlayerActor(randomUUID.toString, randomUUID.toString, client.ref)))
 
     def after = system.shutdown()
   }
