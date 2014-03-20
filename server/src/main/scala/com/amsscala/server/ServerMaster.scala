@@ -10,13 +10,12 @@ import akka.actor.{ Props, ActorRef, Actor, ActorLogging }
 
 import common.LobbyProtocol.Register
 import common.{ Waiting, ClientState }
-import common.GameProtocol.{EndOfGame, InitGame}
-
+import common.GameProtocol.{ EndOfGame, InitGame }
 
 class ServerMaster extends Actor with ActorLogging {
 
   private[this] val clients = MutableSet[Client]()
-  private[this] val games   = MutableMap[String, Game]()
+  private[this] val games = MutableMap[String, Game]()
 
   private[this] def startGame(player1: ActorRef, player2: ActorRef): Game = {
     val game = context.actorOf(Props(new GameActor))

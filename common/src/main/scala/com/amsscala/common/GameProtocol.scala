@@ -4,13 +4,13 @@ package common
 import akka.actor._
 
 object GameProtocol {
-  
-  sealed trait InGameMsg
-  
-  case class InitGame(id: String, name: String, client1: ActorRef, client2: ActorRef)
-  case class GameResult(p1Score: Int, p2Score: Int) 
 
-  case class StartGame(id: String, name: String) extends InGameMsg
+  sealed trait InGameMsg
+
+  case class InitGame(id: String, name: String, client1: ActorRef, client2: ActorRef)
+  case class GameResult(p1Score: Int, p2Score: Int)
+
+  case class StartGame(id: String, name: String, opponentId: String) extends InGameMsg
   case class PlayerReady(client: ActorRef)
   case class StartRound(roundNr: Int) extends InGameMsg
   case class RoundAnswer(roundNr: Int, answer: Answer)

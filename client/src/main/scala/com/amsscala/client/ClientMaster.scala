@@ -12,7 +12,7 @@ class ClientMaster(server: ActorSelection) extends Actor with ActorLogging with 
   }
 
   def playing(player: ActorRef): Receive = {
-    case msg: InGameMsg           => player.forward(msg)
+    case msg: InGameMsg => player.forward(msg)
 
     case cmd @ EndOfGame(_, _, _) =>
       log.debug("Game over. Waiting for another game...")
@@ -20,11 +20,11 @@ class ClientMaster(server: ActorSelection) extends Actor with ActorLogging with 
       unstashAll()
       player ! PoisonPill
 
-    case _                        => stash()
+    case _ => stash()
   }
 
   def waiting: Receive = {
-    case cmd @ StartGame(id, name) =>
+    case cmd @ StartGame(id, name, opponent) =>
       val player = context.actorOf(Props(new PlayerActor(id, name, self)))
       context.become(playing(player))
       player.forward(cmd)

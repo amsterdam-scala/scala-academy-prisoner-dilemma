@@ -44,8 +44,8 @@ class GameActor extends Actor with ActorLogging {
       client1 = init.client1
       client2 = init.client2
       log.info(gameLog("Initialized game"))
-      init.client1 ! StartGame(gameId, gameName)
-      init.client2 ! StartGame(gameId, gameName)
+      init.client1 ! StartGame(gameId, gameName, client2.toString())
+      init.client2 ! StartGame(gameId, gameName, client1.toString())
       log.info(gameLog("Started game"))
       become(prepare)
     }

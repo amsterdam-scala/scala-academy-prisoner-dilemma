@@ -8,6 +8,7 @@ class PlayerActor(gameId: String, name: String, client: ActorRef) extends Actor 
   import GameProtocol._
 
   override def receive = {
-    case _ => ???
+    case StartGame(id, name, opponent) =>
+      sender ! PlayerReady(client)
   }
 }

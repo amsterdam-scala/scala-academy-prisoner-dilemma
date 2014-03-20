@@ -15,15 +15,16 @@ class PlayerActorTest extends Specification with NoTimeConversions {
   //  private implicit val WAIT = 5.seconds
   private val GAME_ID = randomId
   private val GAME_NAME = "test-game"
+  private val OPPONENT_ID = randomId
 
   "Player basic protocol" should {
     "reply with ready after game start" in new DefaultContext {
-      playerActor ! StartGame(GAME_ID, GAME_NAME)
+      playerActor ! StartGame(GAME_ID, GAME_NAME, OPPONENT_ID)
       expectMsg(PlayerReady(client.ref))
     }
 
     "reply with answer on a new round" in new DefaultContext {
-      playerActor ! StartGame(GAME_ID, GAME_NAME)
+      playerActor ! StartGame(GAME_ID, GAME_NAME, OPPONENT_ID)
       expectMsg(PlayerReady(client.ref))
 
       playerActor ! StartRound(1)
@@ -33,7 +34,7 @@ class PlayerActorTest extends Specification with NoTimeConversions {
     }
 
     "reply with with answer on consecutive rounds" in new DefaultContext {
-      playerActor ! StartGame(GAME_ID, GAME_NAME)
+      playerActor ! StartGame(GAME_ID, GAME_NAME, OPPONENT_ID)
       expectMsg(PlayerReady(client.ref))
 
       playerActor ! StartRound(1)
@@ -49,7 +50,7 @@ class PlayerActorTest extends Specification with NoTimeConversions {
 
     "reset and work on new game" in new DefaultContext {
       def checkFullGame() {
-        playerActor ! StartGame(GAME_ID, GAME_NAME)
+        playerActor ! StartGame(GAME_ID, GAME_NAME, OPPONENT_ID)
         expectMsg(PlayerReady(client.ref))
 
         playerActor ! StartRound(1)
