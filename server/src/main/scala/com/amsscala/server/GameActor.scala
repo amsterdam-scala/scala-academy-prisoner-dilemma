@@ -132,8 +132,8 @@ class GameActor extends Actor with ActorLogging {
 }
 
 object GameActor {
-  val MAX_ROUNDS = 100
-  val MIN_ROUNDS = 60
+  val MAX_ROUNDS = 10
+  val MIN_ROUNDS = 6
 
   private[server] sealed trait GameActorProtocol
   private[GameActor] case object RoundTrigger extends GameActorProtocol
