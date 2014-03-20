@@ -1,17 +1,30 @@
 package com.amsscala
 package server
 
-import common.LobbyProtocol.Register
-import common.{ Waiting, ClientState }
+import java.util.UUID._
 
-import scala.collection.mutable.Set
+import scala.collection.mutable.{ Set => MutableSet, Map => MutableMap }
 import scala.util.Random
 
-import akka.actor.{ ActorRef, Actor, ActorLogging }
+import akka.actor.{ Props, ActorRef, Actor, ActorLogging }
+
+import common.LobbyProtocol.Register
+import common.{ Waiting, ClientState }
+import common.GameProtocol.{EndOfGame, InitGame}
+
 
 class ServerMaster extends Actor with ActorLogging {
 
-  private[this] val clients: Set[Client] = Set()
+  private[this] val clients = MutableSet[Client]()
+  private[this] val games   = MutableMap[String, Game]()
+
+  private[this] def startGame(player1: ActorRef, player2: ActorRef): Game = {
+    val game = context.actorOf(Props(new GameActor))
+    val gameId: String = randomUUID().toString
+    game ! InitGame(gameId, randomUUID().toString, player1, player2)
+
+    Game(gameId, player1, player2)
+  }
 
   def receive = {
     case Register =>
@@ -22,10 +35,14 @@ class ServerMaster extends Actor with ActorLogging {
       log.info("Finding a match for {}", newClient)
 
       findMatch(newClient).foreach { matched =>
-        newClient.ref ! "You got a match :)"
-        matched.ref ! "You got a match :)"
+        val newGame = startGame(newClient.ref, matched.ref)
+        games += newGame.id -> newGame
+      }
 
-        // TODO setup a new game here =)
+    case EndOfGame(id, p1, p2) =>
+      games.get(id).map { game =>
+        updateClient(game.player1, newState = Waiting)
+        updateClient(game.player2, newState = Waiting)
       }
   }
 
@@ -37,6 +54,14 @@ class ServerMaster extends Actor with ActorLogging {
     else
       None
   }
+
+  private[this] def updateClient(ref: ActorRef, newState: ClientState): Unit = {
+    clients.find(_.ref == ref).map { client =>
+      clients -= client
+      clients += client.copy(state = newState)
+    }
+  }
 }
 
 case class Client(ref: ActorRef, state: ClientState)
+case class Game(id: String, player1: ActorRef, player2: ActorRef)

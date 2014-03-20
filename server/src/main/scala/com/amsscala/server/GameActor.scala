@@ -1,9 +1,11 @@
-package com.amsscala.server
+package com.amsscala
+package server
 
 import akka.actor._
 import scala.concurrent.duration._
-import com.amsscala.common._
-import com.amsscala.common.GameProtocol._
+
+import common._
+import common.GameProtocol._
 
 class GameActor extends Actor with ActorLogging {
   import context._
