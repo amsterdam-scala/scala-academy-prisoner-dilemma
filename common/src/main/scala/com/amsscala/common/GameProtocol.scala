@@ -7,11 +7,11 @@ object GameProtocol {
   
   sealed trait InGameMsg
   
-  case class InitGame(id: String, name: String, p1: ActorRef, p2: ActorRef)
+  case class InitGame(id: String, name: String, client1: ActorRef, client2: ActorRef)
   case class GameResult(p1Score: Int, p2Score: Int) 
 
   case class StartGame(id: String, name: String) extends InGameMsg
-  case object PlayerReady 
+  case class PlayerReady(client: ActorRef)
   case class StartRound(roundNr: Int) extends InGameMsg
   case class RoundAnswer(roundNr: Int, answer: Answer)
   case class RoundResult(roundNr: Int, otherAnswer: Answer, ownAnswer: Answer, otherScore: Int, ownScore: Int) extends InGameMsg

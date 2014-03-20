@@ -27,10 +27,13 @@ class GameActor extends Actor with ActorLogging {
   private var p1Score: Int = _
   private var p2Score: Int = _
 
+  private var client1: ActorRef = _
+  private var client2: ActorRef = _
+
   private var currentP1Answer: Option[RoundAnswer] = None
   private var currentP2Answer: Option[RoundAnswer] = None
 
-  private def gameLog(msg: String) = gameName + "/" + gameId + ": " + msg
+  private def gameLog(msg: String) = s"$gameName/$gameId:$msg"
 
   override def receive = {
     case InitGameConfigurable(init, nrOfRounds, delay) => {
@@ -38,11 +41,11 @@ class GameActor extends Actor with ActorLogging {
       initNrOfRounds = nrOfRounds
       gameId = init.id
       gameName = init.name
-      p1 = init.p1
-      p2 = init.p2
+      client1 = init.client1
+      client2 = init.client2
       log.info(gameLog("Initialized game"))
-      p1 ! StartGame(gameId, gameName)
-      p2 ! StartGame(gameId, gameName)
+      init.client1 ! StartGame(gameId, gameName)
+      init.client2 ! StartGame(gameId, gameName)
       log.info(gameLog("Started game"))
       become(prepare)
     }
@@ -52,11 +55,13 @@ class GameActor extends Actor with ActorLogging {
   }
 
   private def prepare: Receive = {
-    case PlayerReady => {
+    case PlayerReady(client) => {
       log.info(gameLog("Player " + sender + " send ready"))
-      if (sender == p1) {
+      if (client == client1) {
+        p1 = sender
         p1Ready = true
-      } else if (sender == p2) {
+      } else if (client == client2) {
+        p2 = sender
         p2Ready = true
       } else {
         log.warning(gameLog("Received ready message from player that is not in game: " + sender))
@@ -88,9 +93,9 @@ class GameActor extends Actor with ActorLogging {
     case answer: RoundAnswer => {
       log.debug(gameLog("Received answer from " + sender + ": " + answer))
       (sender, answer) match {
-        case (p1, answer) if (currentP1Answer.isEmpty) =>
+        case (p1, answer) if currentP1Answer.isEmpty =>
           currentP1Answer = Some(answer)
-        case (p2, answer) if (currentP2Answer.isEmpty) =>
+        case (p2, answer) if currentP2Answer.isEmpty =>
           currentP2Answer = Some(answer)
         case (p, _) =>
           log.warning("Result already received for round " + currentRound + " from player " + p)

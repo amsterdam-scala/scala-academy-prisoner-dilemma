@@ -25,7 +25,7 @@ class ClientMaster(server: ActorSelection) extends Actor with ActorLogging with 
 
   def waiting: Receive = {
     case cmd @ StartGame(id, name) =>
-      val player = context.actorOf(Props(new PlayerActor(id, name)))
+      val player = context.actorOf(Props(new PlayerActor(id, name, self)))
       context.become(playing(player))
       player.forward(cmd)
   }
