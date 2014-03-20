@@ -34,10 +34,7 @@ class ServerMaster extends Actor with ActorLogging {
       log.info("Registered a new client {}", newClient)
       log.info("Finding a match for {}", newClient)
 
-      findMatch(newClient).foreach { matched =>
-        val newGame = startGame(newClient.ref, matched.ref)
-        games += newGame.id -> newGame
-      }
+      setupGame(newClient)
 
     case EndOfGame(id, p1, p2) =>
       games.get(id).map { game =>
@@ -53,6 +50,13 @@ class ServerMaster extends Actor with ActorLogging {
       Some(allMatches(Random.nextInt(allMatches.size)))
     else
       None
+  }
+
+  private[this] def setupGame(client: Client): Unit = {
+    findMatch(client).foreach { matched =>
+      val newGame = startGame(client.ref, matched.ref)
+      games += newGame.id -> newGame
+    }
   }
 
   private[this] def updateClient(ref: ActorRef, newState: ClientState): Unit = {
