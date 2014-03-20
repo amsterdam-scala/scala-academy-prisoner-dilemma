@@ -16,28 +16,28 @@ class GameActorTest extends Specification with NoTimeConversions {
 
   "Game Actor" should {
     "send start game messages to actors after init" in new DefaultContext {
-      gameActor ! InitGame(GAME_ID, GAME_NAME, p1Actor, p2Actor)
-      p1Probe.expectMsg(StartGame(GAME_ID, GAME_NAME))
-      p2Probe.expectMsg(StartGame(GAME_ID, GAME_NAME))
+      gameActor ! InitGame(GAME_ID, GAME_NAME, client1.ref, client2.ref)
+      client1.expectMsg(StartGame(GAME_ID, GAME_NAME))
+      client2.expectMsg(StartGame(GAME_ID, GAME_NAME))
     }
 
     "not init twice" in new DefaultContext {
-      gameActor ! InitGame(GAME_ID, GAME_NAME, p1Actor, p2Actor)
-      p1Probe.expectMsg(StartGame(GAME_ID, GAME_NAME))
-      p2Probe.expectMsg(StartGame(GAME_ID, GAME_NAME))
+      gameActor ! InitGame(GAME_ID, GAME_NAME, client1.ref, client2.ref)
+      client1.expectMsg(StartGame(GAME_ID, GAME_NAME))
+      client2.expectMsg(StartGame(GAME_ID, GAME_NAME))
 
-      gameActor ! InitGame(GAME_ID, GAME_NAME, p1Actor, p2Actor)
-      p1Probe.expectNoMsg
-      p2Probe.expectNoMsg
+      gameActor ! InitGame(GAME_ID, GAME_NAME, client1.ref, client2.ref)
+      client1.expectNoMsg
+      client2.expectNoMsg
     }
 
     "init round when both players are ready" in new DefaultContext {
-      gameActor ! InitGame(GAME_ID, GAME_NAME, p1Actor, p2Actor)
-      p1Probe.expectMsg(StartGame(GAME_ID, GAME_NAME))
-      p2Probe.expectMsg(StartGame(GAME_ID, GAME_NAME))
+      gameActor ! InitGame(GAME_ID, GAME_NAME, client1.ref, client2.ref)
+      client1.expectMsg(StartGame(GAME_ID, GAME_NAME))
+      client2.expectMsg(StartGame(GAME_ID, GAME_NAME))
 
-      p1Probe.send(gameActor, PlayerReady)
-      p2Probe.send(gameActor, PlayerReady)
+      p1Probe.send(gameActor, PlayerReady(client1.ref))
+      p2Probe.send(gameActor, PlayerReady(client2.ref))
 
       p1Probe.expectMsg(StartRound(1))
       p2Probe.expectMsg(StartRound(1))
@@ -119,6 +119,9 @@ class GameActorTest extends Specification with NoTimeConversions {
     extends TestKit(ActorSystem("test-system"))
     with ImplicitSender with After {
 
+    lazy val client1 = TestProbe()
+    lazy val client2 = TestProbe()
+
     lazy val gameActor = system.actorOf(Props[GameActor])
     lazy val p1Probe = TestProbe()
     lazy val p1Actor = p1Probe.ref
@@ -128,11 +131,11 @@ class GameActorTest extends Specification with NoTimeConversions {
     def after = system.shutdown()
 
     def doInit(nrOfRounds: Option[Int] = None, roundDelay: FiniteDuration = 1.second) = {
-      gameActor ! InitGameConfigurable(InitGame(GAME_ID, GAME_NAME, p1Actor, p2Actor), nrOfRounds, roundDelay)
-      p1Probe.expectMsg(StartGame(GAME_ID, GAME_NAME))
-      p2Probe.expectMsg(StartGame(GAME_ID, GAME_NAME))
-      p1Probe.send(gameActor, PlayerReady)
-      p2Probe.send(gameActor, PlayerReady)
+      gameActor ! InitGameConfigurable(InitGame(GAME_ID, GAME_NAME, client1.ref, client2.ref), nrOfRounds, roundDelay)
+      client1.expectMsg(StartGame(GAME_ID, GAME_NAME))
+      client2.expectMsg(StartGame(GAME_ID, GAME_NAME))
+      p1Probe.send(gameActor, PlayerReady(client1.ref))
+      p2Probe.send(gameActor, PlayerReady(client2.ref))
     }
   }
 }
